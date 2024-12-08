@@ -37,7 +37,7 @@ Here is the shiny app link :
 ## Contact
 If you have any questions or issues regarding the analysis or the app, feel free to contact us:
 
-  Email: clou25@wisc.edu, rming@wisc.edu, myu259@wisc.edu, szhang655@wisc.edu
+  Email: myu259@wisc.edu, mzhao246@wisc.edu
 
  
 **Special Thanks to Professor Kang**
