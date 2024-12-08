@@ -32,7 +32,7 @@ This folder contains the project summary and explanation:
 ### 5. `README.md`
 This file summarizes the contents of the repository and provides directions for use.
 ### 6. `Shiny App link`
-Here is the shiny app link :
+Here is the shiny app link : https://628nodie.shinyapps.io/hw4shiny/
 
 ## Contact
 If you have any questions or issues regarding the analysis or the app, feel free to contact us:
