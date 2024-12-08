@@ -1,6 +1,10 @@
-# 628hw4
-628hw4Spotify
+
 # Podcast Episode Clustering and Visualization
+## Authors 
+- Minliang Yu 
+- Minyuan Zhao
+
+(in alphabetical order) 
 
 This repository contains all files and resources for the project on podcast episode clustering and visualization. The project aims to construct two novel metrics for podcast episodes, categorize episodes by duration and thematic content, and build an interactive Shiny app for exploring these metrics.
 
@@ -29,4 +33,12 @@ This folder contains the project summary and explanation:
 This file summarizes the contents of the repository and provides directions for use.
 ### 6. `Shiny App link`
 Here is the shiny app link :
+
+## Contact
+If you have any questions or issues regarding the analysis or the app, feel free to contact us:
+
+  Email: clou25@wisc.edu, rming@wisc.edu, myu259@wisc.edu, szhang655@wisc.edu
+
+ 
+**Special Thanks to Professor Kang**
 ---
