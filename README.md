@@ -19,7 +19,7 @@ This folder contains the dataset used in the project:
 ### 2. `code/`
 This folder contains all the R code for the analysis and visualization:
 - **`kmeans_time_metric.R`**: Code for constructing the time-based metric using KMeans clustering.
-- **`lda_topic_model.R`**: Code for constructing the thematic metric using LDA (Latent Dirichlet Allocation).
+- **`lda_topic_model.Rmd`**: Code for constructing the thematic metric using LDA (Latent Dirichlet Allocation).
 - **`app.R`**: The Shiny app code for interactive exploration of the metrics.And of course, the final kmeans method to achieve the goal.
 
 ### 3. `images/`
