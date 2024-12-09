@@ -1,0 +1,162 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+rm(list=ls())
+data<-read.csv(file.choose(),header = T)
+```
+
+
+```{r}
+library(servr)
+library(slam)
+library(topicmodels)
+library(LDAvis)
+library(textstem)
+library(tm)
+library(SnowballC)
+```
+
+
+```{r}
+corpus_epi <- Corpus(VectorSource(data$Episode.Description))
+
+corpus_epi <- tm_map(corpus_epi, content_transformer(tolower))
+corpus_epi <- tm_map(corpus_epi, content_transformer(function(x) {
+  gsub("[^a-zA-Z\\s]", " ", x)
+}))
+
+corpus_epi <- tm_map(corpus_epi, content_transformer(function(x) {
+  gsub("\\s+", " ", x)
+}))
+
+english_stopwords <- stopwords("en")
+spanish_stopwords <- stopwords("es")
+french_stopwords <- stopwords("fr")
+german_stopwords <- stopwords("de")
+custom_stopwords <- c("podcast", "podcasts", "spotify","episode", "http", "www", "com", "email", "pod", "https", "youtube", "instagram", "twitter", "sponsor", "sponsors", "disclaimer", "follow", "support", "website", "shopify", "lex", "trail", "exclusive", "free", "check", "join","listen", "links", "subscribe", "week", "click", "timestamps", "timestamp", "transcript", "rss", "expressvpn", "netsuite", "introduction", "episodes", "patreon", "linkedin", "facebook", "visit", "ad", "adchoices", "00", "01", "acast", "reddit", "every", "will", "can" ,"get", "might", "may", "bit", "tiktok", "gmail", "one", "like", "scp", "episodio", "use", "just", "us", "th", "u", "h", "podcastchoices", "discord", "google", "twitch", "linktr")
+
+combined_stopwords <- c(english_stopwords, spanish_stopwords, french_stopwords, german_stopwords, custom_stopwords)
+corpus_epi <- tm_map(corpus_epi, removeWords, combined_stopwords)
+```
+
+
+
+
+```{r}
+dtm_epi <- DocumentTermMatrix(corpus_epi)
+row_sums <- slam::row_sums(dtm_epi)
+
+zero_row_indices <- which(row_sums == 0)
+
+print(zero_row_indices)
+
+dtm_epi_non_zero <- dtm_epi[row_sums > 0, ]
+sum(slam::row_sums(dtm_epi_non_zero) == 0) 
+```
+
+
+
+
+```{r}
+term.frequency <- col_sums(dtm_epi_non_zero)
+
+freq_threshold <- 10
+high_freq_words <- which(term.frequency > freq_threshold)
+
+dtm_epi_non_zero <- dtm_epi_non_zero[, high_freq_words]
+
+row_sums_sec <- slam::row_sums(dtm_epi_non_zero)
+
+zero_row_indices_sec <- which(row_sums_sec == 0)
+
+print(zero_row_indices_sec)
+
+dtm_epi_final <- dtm_epi_non_zero[row_sums_sec > 0, ]
+
+print(dim(dtm_epi_final))
+print(sum(row_sums(dtm_epi_final) == 0))
+```
+
+```{r}
+# 使用优化后的稀疏矩阵进行 LDA 和可视化
+lda_model_epi <- LDA(dtm_epi_final, k = 8, control = list(seed = 9999))
+```
+
+```{r}
+phi <- posterior(lda_model_epi)$terms
+theta <- posterior(lda_model_epi)$topics
+```
+
+```{r}
+json_data <- createJSON(
+  phi = phi,
+  theta = theta,
+  doc.length = row_sums(dtm_epi_final),
+  vocab = colnames(dtm_epi_final),
+  term.frequency = term.frequency[high_freq_words]
+)
+
+serVis(json_data)
+```
+
+
+```{r}
+data_cleaned <- data[-zero_row_indices, ]
+data_cleaned_two <- data_cleaned[-zero_row_indices_sec, ]
+nrow(data_cleaned_two)
+nrow(theta)
+```
+
+```{r}
+combined_data <- cbind(data_cleaned_two, theta)
+```
+
+
+```{r}
+topics <- topics(lda_model_epi)
+
+topics
+```
+
+```{r}
+topics_df <- data.frame(topic = topics)
+
+head(topics_df)
+```
+
+```{r}
+final_data <- cbind(combined_data, topics_df)
+```
+
+
+```{r}
+final_data$GroupIndex <- cumsum(final_data$Episode.Index == 1)
+```
+
+```{r}
+library(dplyr)
+
+get_mode <- function(x) {
+  uniq_x <- unique(x)
+  uniq_x[which.max(tabulate(match(x, uniq_x)))]
+}
+
+result <- final_data %>%
+  group_by(GroupIndex) %>%
+  summarize(Mode = get_mode(topic))
+
+print(result)
+```
+
+```{r}
+data_with_mode <- final_data %>%
+  left_join(result, by = "GroupIndex")
+```
+
+```{r}
+write.csv(data_with_mode, "C:/Users/NO DICE/Downloads/seed9999_no_kmeans.csv", row.names = FALSE)
+```
+
