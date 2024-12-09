@@ -27,7 +27,7 @@ This folder contains images generated during the analysis and screenshots of the
 
 ### 4. `summary`
 This folder contains the project summary and explanation:
-- **`project_summary.md`**: A concise explanation of the constructed metrics, clustering approach, and findings.
+- **`summaryhw4.pdf`**: A concise explanation of the constructed metrics, clustering approach, and findings.
 
 ### 5. `README.md`
 This file summarizes the contents of the repository and provides directions for use.
